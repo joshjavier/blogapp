@@ -1,9 +1,10 @@
 module.exports = {
   root: true,
   env: {
-    browser: true,
-    es2020: true,
-    node: true,
+    'browser': true,
+    'es2020': true,
+    'node': true,
+    'vitest-globals/env': true,
   },
   extends: [
     'eslint:recommended',
@@ -11,6 +12,7 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
     'plugin:@stylistic/recommended-extends',
+    'plugin:vitest-globals/recommended',
   ],
   ignorePatterns: ['dist'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
