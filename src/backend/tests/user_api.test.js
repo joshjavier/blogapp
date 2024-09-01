@@ -1,12 +1,12 @@
-const { after, beforeEach, describe, it,  } = require('node:test')
-const assert = require('node:assert/strict')
-const bcrypt = require('bcrypt')
-const mongoose = require('mongoose')
-const request = require('supertest')
-const app = require('../app')
-const helper = require('./test_helper')
-const User = require('../models/user')
-const Blog = require('../models/blog')
+import { after, beforeEach, describe, it } from 'node:test'
+import assert, { strictEqual } from 'node:assert/strict'
+import { hash } from 'bcrypt'
+import mongoose from 'mongoose'
+import request from 'supertest'
+import app from '../app.js'
+import * as helper from './test_helper.js'
+import User from '../models/user.js'
+import Blog from '../models/blog.js'
 
 const api = request(app)
 
@@ -15,7 +15,7 @@ beforeEach(async () => {
   await Blog.deleteMany({})
 
   // add initial user
-  const passwordHash = await bcrypt.hash('root', 10)
+  const passwordHash = await hash('root', 10)
   const user = new User({ username: 'root', passwordHash })
   await user.save()
 
@@ -105,7 +105,7 @@ describe('getting the list of all users', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    assert.strictEqual(response.body.length, 1)
+    strictEqual(response.body.length, 1)
   })
 
   it('each user should have a `blogs` prop containing array of blogs they created', async () => {
