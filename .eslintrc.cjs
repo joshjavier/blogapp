@@ -27,6 +27,7 @@ module.exports = {
     ],
     'react/prop-types': 'off',
     '@stylistic/brace-style': ['error', '1tbs'],
+    '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
     '@stylistic/multiline-ternary': 'off',
   },
 }
