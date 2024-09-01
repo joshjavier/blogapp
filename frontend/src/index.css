@@ -1,0 +1,17 @@
+:is([role=alert], li):empty {
+  display: none;
+}
+
+[role=alert] {
+  border: 4px solid;
+  padding: 16px;
+  border-radius: 8px;
+  color: red;
+  font-size: 20px;
+  background-color: hsl(0 0% 90%);
+  margin-bottom: 16px;
+}
+
+[role=alert].success {
+  color: green;
+}
