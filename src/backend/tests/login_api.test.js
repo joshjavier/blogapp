@@ -1,10 +1,10 @@
-const { after, beforeEach, describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
-const request = require('supertest')
-const app = require('../app')
-const User = require('../models/user')
+import { after, beforeEach, describe, it } from 'node:test'
+import assert, { strictEqual } from 'node:assert/strict'
+import mongoose from 'mongoose'
+import { hash } from 'bcrypt'
+import request from 'supertest'
+import app from '../app.js'
+import User from '../models/user.js'
 
 const api = request(app)
 
@@ -12,7 +12,7 @@ describe('logging in', () => {
   beforeEach(async () => {
     await User.deleteMany({})
 
-    const passwordHash = await bcrypt.hash('root', 10)
+    const passwordHash = await hash('root', 10)
     const user = new User({ username: 'root', passwordHash, name: 'Walter White' })
     await user.save()
   })
@@ -25,8 +25,8 @@ describe('logging in', () => {
       .expect('Content-Type', /application\/json/)
 
     assert('token' in response.body)
-    assert.strictEqual(response.body.username, 'root')
-    assert.strictEqual(response.body.name, 'Walter White')
+    strictEqual(response.body.username, 'root')
+    strictEqual(response.body.name, 'Walter White')
   })
 
   it('fails when username or password is missing', async () => {

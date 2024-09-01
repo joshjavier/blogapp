@@ -1,7 +1,9 @@
-const loginRouter = require('express').Router()
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const User = require('../models/user')
+import { Router } from 'express'
+import { compare } from 'bcrypt'
+import jwt from 'jsonwebtoken'
+import User from '../models/user.js'
+
+const loginRouter = Router()
 
 loginRouter.post('/', async (req, res, next) => {
   const { username, password } = req.body
@@ -10,7 +12,7 @@ loginRouter.post('/', async (req, res, next) => {
     const user = await User.findOne({ username })
     const match = !user || !password
       ? false
-      : await bcrypt.compare(password, user.passwordHash)
+      : await compare(password, user.passwordHash)
 
     if (!match) {
       return res.status(401).json({ error: 'invalid username or password' })
@@ -33,4 +35,4 @@ loginRouter.post('/', async (req, res, next) => {
   }
 })
 
-module.exports = loginRouter
+export default loginRouter
