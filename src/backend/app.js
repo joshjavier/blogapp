@@ -36,6 +36,10 @@ if (process.env.NODE_ENV === 'test') {
   app.use('/api/testing', testingRouter)
 }
 
+if (process.env.NODE_ENV === 'production') {
+  app.use('/', express.static('dist'))
+}
+
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
