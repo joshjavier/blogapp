@@ -1,12 +1,12 @@
-const { after, beforeEach, describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-const bcrypt = require('bcrypt')
-const request = require('supertest')
-const app = require('../app')
-const mongoose = require('mongoose')
-const Blog = require('../models/blog')
-const User = require('../models/user')
-const helper = require('./test_helper')
+import { after, beforeEach, describe, it } from 'node:test'
+import assert, { strictEqual } from 'node:assert/strict'
+import { hash } from 'bcrypt'
+import request from 'supertest'
+import app from '../app.js'
+import mongoose from 'mongoose'
+import Blog from '../models/blog.js'
+import User from '../models/user.js'
+import * as helper from './test_helper.js'
 
 const api = request(app)
 
@@ -17,7 +17,7 @@ beforeEach(async () => {
   await User.deleteMany({})
 
   // add initial user
-  const passwordHash = await bcrypt.hash('root', 10)
+  const passwordHash = await hash('root', 10)
   const user = new User({ username: 'root', passwordHash })
   await user.save()
 
@@ -35,7 +35,7 @@ describe('GET /api/blogs', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
   it('each blog post has an `id` prop', async () => {
@@ -77,9 +77,9 @@ describe('POST /api/blogs', () => {
       .expect('Content-Type', /application\/json/)
 
     const createdBlog = response.body
-    assert.strictEqual(createdBlog.author, 'John Doe')
-    assert.strictEqual(createdBlog.title, 'Untitled')
-    assert.strictEqual(createdBlog.likes, 99)
+    strictEqual(createdBlog.author, 'John Doe')
+    strictEqual(createdBlog.title, 'Untitled')
+    strictEqual(createdBlog.likes, 99)
     assert('id' in createdBlog)
     assert('user' in createdBlog)
   })
@@ -88,7 +88,7 @@ describe('POST /api/blogs', () => {
     const blogsAtStart = await helper.blogsInDb()
     await api.post('/api/blogs').auth(token, { type: 'bearer' }).send(testBlog)
     const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length + 1)
+    strictEqual(blogsAtEnd.length, blogsAtStart.length + 1)
   })
 
   it('`likes` prop defaults to 0 if missing from request body', async () => {
@@ -105,7 +105,7 @@ describe('POST /api/blogs', () => {
       .expect(201)
 
     const createdBlog = response.body
-    assert.strictEqual(createdBlog.likes, 0)
+    strictEqual(createdBlog.likes, 0)
   })
 
   it('responds with 400 Bad Request when `title` prop is missing', async () => {
@@ -174,12 +174,12 @@ describe('DELETE /api/blogs/:id', () => {
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
+    strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
   })
 
   it("fails if blog isn't created by the authenticated user", async () => {
     // create a new user
-    const passwordHash = await bcrypt.hash('newuser', 10)
+    const passwordHash = await hash('newuser', 10)
     const newuser = new User({ username: 'newuser', passwordHash })
     await newuser.save()
 
@@ -196,21 +196,28 @@ describe('DELETE /api/blogs/:id', () => {
       .expect(403)
 
     const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+    strictEqual(blogsAtEnd.length, blogsAtStart.length)
   })
 })
 
 describe('PUT /api/blogs/:id', () => {
   beforeEach(async () => {
-    const user = await User.findOne()
+    const response = await api
+      .post('/api/login')
+      .send({ username: 'root', password: 'root' })
+      .expect(200)
+
+    token = response.body.token
 
     const blog = {
       title: 'Write Dumb Code',
       author: 'Matthew Rocklin',
       url: 'https://matthewrocklin.com/write-dumb-code.html',
-      user: user.id,
     }
-    await api.post('/api/blogs').send(blog).expect(201)
+    await api.post('/api/blogs')
+      .auth(token, { type: 'bearer' })
+      .send(blog)
+      .expect(201)
   })
 
   const updatedBlog = {
@@ -228,6 +235,7 @@ describe('PUT /api/blogs/:id', () => {
 
     await api
       .put(`/api/blogs/${id}`)
+      .auth(token, { type: 'bearer' })
       .send({ ...updatedBlog, user: user.id })
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -238,10 +246,12 @@ describe('PUT /api/blogs/:id', () => {
     const id = blogsAtStart[blogsAtStart.length - 1].id
     const user = await User.findOne()
 
-    await api.put(`/api/blogs/${id}`).send({ ...updatedBlog, user: user.id })
+    await api.put(`/api/blogs/${id}`)
+      .auth(token, { type: 'bearer' })
+      .send({ ...updatedBlog, user: user.id })
 
     const blogsAtEnd = await helper.blogsInDb()
-    assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
+    strictEqual(blogsAtEnd.length, blogsAtStart.length)
   })
 })
 
