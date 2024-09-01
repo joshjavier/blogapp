@@ -1,0 +1,13 @@
+.blog {
+  padding: 10px;
+  border: 1px solid;
+  margin-bottom: 5px;
+}
+
+.blog .delete {
+  background: red;
+  color: white;
+  font-weight: 700;
+  border-radius: 4px;
+  border: 1px solid red;
+}

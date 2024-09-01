@@ -7,7 +7,7 @@ export default defineWorkspace([
       name: 'frontend',
       environment: 'jsdom',
       setupFiles: ['./vitest.setup.js'],
-      include: ['src/frontend/**/*.{test,spec}.{js,jsx,ts,tsx}'],
+      include: ['src/frontend/**/*{test,spec}.{js,jsx,ts,tsx}'],
     },
   },
 ])

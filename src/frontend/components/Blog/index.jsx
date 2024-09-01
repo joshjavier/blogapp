@@ -1,21 +1,8 @@
 import { useState } from 'react'
+import './style.css'
 
 const Blog = ({ blog, user, likeBlog, removeBlog }) => {
   const [visible, setVisible] = useState(false)
-
-  const blogStyle = {
-    padding: 10,
-    border: '1px solid',
-    marginBottom: 5,
-  }
-
-  const deleteBtnStyle = {
-    background: 'red',
-    color: 'white',
-    fontWeight: 700,
-    borderRadius: 4,
-    border: '1px solid red',
-  }
 
   const onLike = () => likeBlog(blog)
 
@@ -30,7 +17,7 @@ const Blog = ({ blog, user, likeBlog, removeBlog }) => {
   const isCreatedByCurrentUser = blog.user && blog.user.username === user.username
 
   return (
-    <div className="blog" style={blogStyle}>
+    <div className="blog">
       {blog.title}
       {' '}
       {blog.author}
@@ -55,7 +42,7 @@ const Blog = ({ blog, user, likeBlog, removeBlog }) => {
           <li>{blog.user && blog.user.name}</li>
 
           {isCreatedByCurrentUser && (
-            <button onClick={onRemove} style={deleteBtnStyle}>
+            <button onClick={onRemove} className="delete">
               remove
             </button>
           )}
