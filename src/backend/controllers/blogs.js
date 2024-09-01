@@ -1,5 +1,7 @@
-const blogsRouter = require('express').Router()
-const Blog = require('../models/blog')
+import { Router } from 'express'
+import Blog from '../models/blog.js'
+
+const blogsRouter = Router()
 
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', '-blogs')
@@ -50,7 +52,7 @@ blogsRouter.put('/:id', async (req, res, next) => {
     title,
     author,
     url,
-    likes: likes || 0
+    likes: likes || 0,
   }
 
   try {
@@ -65,4 +67,4 @@ blogsRouter.put('/:id', async (req, res, next) => {
   }
 })
 
-module.exports = blogsRouter
+export default blogsRouter

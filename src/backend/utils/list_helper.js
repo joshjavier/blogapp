@@ -1,6 +1,6 @@
-const _ = require('lodash')
+import { transform, countBy, maxBy, groupBy } from 'lodash'
 
-const totalLikes = (blogs) => {
+export const totalLikes = (blogs) => {
   if (blogs.length === 0) return 0
 
   if (blogs.length === 1) return blogs[0].likes
@@ -8,7 +8,7 @@ const totalLikes = (blogs) => {
   return blogs.reduce((sum, blog) => sum + blog.likes, 0)
 }
 
-const favoriteBlog = (blogs) => {
+export const favoriteBlog = (blogs) => {
   return blogs.length === 0
     ? null
     : blogs
@@ -16,34 +16,27 @@ const favoriteBlog = (blogs) => {
       .map(({ title, author, likes }) => ({ title, author, likes }))[0]
 }
 
-const mostBlogs = (blogs) => {
+export const mostBlogs = (blogs) => {
   if (blogs.length === 0) return null
 
-  const authorBlogs = _.transform(
-    _.countBy(blogs, 'author'),
+  const authorBlogs = transform(
+    countBy(blogs, 'author'),
     (result, blogs, author) => {
       result.push({ author, blogs })
     }, [])
 
-  return _.maxBy(authorBlogs, 'blogs')
+  return maxBy(authorBlogs, 'blogs')
 }
 
-const mostLikes = (blogs) => {
+export const mostLikes = (blogs) => {
   if (blogs.length === 0) return null
 
-  const authorLikes = _.transform(
-    _.groupBy(blogs, 'author'),
+  const authorLikes = transform(
+    groupBy(blogs, 'author'),
     (result, blogs, author) => {
       const likes = blogs.reduce((sum, blog) => sum + blog.likes, 0)
       result.push({ author, likes })
     }, [])
 
-  return _.maxBy(authorLikes, 'likes')
-}
-
-module.exports = {
-  totalLikes,
-  favoriteBlog,
-  mostBlogs,
-  mostLikes,
+  return maxBy(authorLikes, 'likes')
 }

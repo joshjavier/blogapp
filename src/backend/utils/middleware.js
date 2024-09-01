@@ -1,21 +1,21 @@
-const morgan = require('morgan')
-const logger = require('./logger')
-const jwt = require('jsonwebtoken')
-const User = require('../models/user')
+import morgan from 'morgan'
+import * as logger from './logger.js'
+import jwt from 'jsonwebtoken'
+import User from '../models/user.js'
 
-morgan.token('request-body', (req) => JSON.stringify(req.body))
-const requestLogger = morgan(
+morgan.token('request-body', req => JSON.stringify(req.body))
+export const requestLogger = morgan(
   ':method :url :status :res[content-length] - :response-time ms :request-body',
   {
     skip: () => process.env.NODE_ENV === 'test',
-  }
+  },
 )
 
-const unknownEndpoint = (req, res) => {
+export const unknownEndpoint = (req, res) => {
   return res.status(404).json({ error: 'unknown endpoint' })
 }
 
-const errorHandler = (err, req, res, next) => {
+export const errorHandler = (err, req, res, next) => {
   logger.error(err.message)
 
   if (err.name === 'CastError') {
@@ -31,7 +31,7 @@ const errorHandler = (err, req, res, next) => {
   next(err)
 }
 
-const tokenExtractor = (req, res, next) => {
+export const tokenExtractor = (req, res, next) => {
   const auth = req.get('Authorization')
   req.token = auth && auth.startsWith('Bearer ')
     ? auth.replace('Bearer ', '')
@@ -40,7 +40,7 @@ const tokenExtractor = (req, res, next) => {
   next()
 }
 
-const userExtractor = async (req, res, next) => {
+export const userExtractor = async (req, res, next) => {
   try {
     if (req.method === 'POST' || req.method === 'DELETE') {
       const payload = jwt.verify(req.token, process.env.SECRET)
@@ -51,12 +51,4 @@ const userExtractor = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
-}
-
-module.exports = {
-  requestLogger,
-  unknownEndpoint,
-  errorHandler,
-  tokenExtractor,
-  userExtractor,
 }
