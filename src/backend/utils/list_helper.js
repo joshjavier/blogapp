@@ -1,4 +1,4 @@
-import { transform, countBy, maxBy, groupBy } from 'lodash'
+import _ from 'lodash'
 
 export const totalLikes = (blogs) => {
   if (blogs.length === 0) return 0
@@ -19,24 +19,24 @@ export const favoriteBlog = (blogs) => {
 export const mostBlogs = (blogs) => {
   if (blogs.length === 0) return null
 
-  const authorBlogs = transform(
-    countBy(blogs, 'author'),
+  const authorBlogs = _.transform(
+    _.countBy(blogs, 'author'),
     (result, blogs, author) => {
       result.push({ author, blogs })
     }, [])
 
-  return maxBy(authorBlogs, 'blogs')
+  return _.maxBy(authorBlogs, 'blogs')
 }
 
 export const mostLikes = (blogs) => {
   if (blogs.length === 0) return null
 
-  const authorLikes = transform(
-    groupBy(blogs, 'author'),
+  const authorLikes = _.transform(
+    _.groupBy(blogs, 'author'),
     (result, blogs, author) => {
       const likes = blogs.reduce((sum, blog) => sum + blog.likes, 0)
       result.push({ author, likes })
     }, [])
 
-  return maxBy(authorLikes, 'likes')
+  return _.maxBy(authorLikes, 'likes')
 }
