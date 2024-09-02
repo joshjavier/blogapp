@@ -1,9 +1,13 @@
 name: CI
 
-on: push
+on:
+  push:
+  pull_request:
+    branches: main
+    types: [opened, synchronize]
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎️
@@ -26,3 +30,15 @@ jobs:
 
       - name: Build 🏗️
         run: npm run build
+
+      - name: Set up flyctl
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        with:
+          version: 0.2.124
+
+      - name: Deploy to Fly.io 🚀
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
