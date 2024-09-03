@@ -12,7 +12,7 @@
     "test:e2e": "cypress run",
     "coverage": "vitest run --coverage",
     "start": "NODE_ENV=production node src/backend/index.js",
-    "ci:start-test": "NODE_ENV=test node src/backend/index.js",
+    "ci:start-test": "NODE_ENV=test PORT=$PORT TEST_MONGODB_URI=$MONGOURI SECRET=$SECRET node src/backend/index.js",
     "backend:dev": "NODE_ENV=development nodemon --env-file=.env.local src/backend/index.js",
     "backend:test": "NODE_ENV=test node --env-file=.env.local --test --test-concurrency=1 \"src/backend/**/*.test.js\"",
     "backend:test-start": "NODE_ENV=test node --env-file=.env.local src/backend/index.js",
