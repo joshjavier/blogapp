@@ -1,5 +1,8 @@
 name: CI
 
+env:
+  SKIP: ${{ contains(join(github.event.commits.*.message), '#skip') }}
+
 on:
   push:
   pull_request:
@@ -45,13 +48,13 @@ jobs:
           command: npm run test:e2e
 
       - name: Set up flyctl
-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' && env.SKIP == 'false' }}
         uses: superfly/flyctl-actions/setup-flyctl@master
         with:
           version: 0.2.124
 
       - name: Deploy to Fly.io 🚀
-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' && env.SKIP == 'false' }}
         run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
