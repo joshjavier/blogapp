@@ -35,10 +35,12 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           PORT: 3003
-          TEST_MONGODB_URI: ${{ secrets.TEST_MONGODB_URI }}
+          MONGOURI: ${{ secrets.TEST_MONGODB_URI }}
           SECRET: ${{ secrets.SECRET }}
         with:
-          start: npm run dev -- --host, npm run ci:start-test
+          start: |
+            npm run dev -- --host
+            PORT=$PORT TEST_MONGODB_URI=$MONGOURI SECRET=$SECRET npm run ci:start-test
           wait-on: 'http://localhost:5173, http://localhost:3003'
           command: npm run test:e2e
 
