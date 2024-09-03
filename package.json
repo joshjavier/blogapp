@@ -9,11 +9,14 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
+    "test:e2e": "cypress run",
     "coverage": "vitest run --coverage",
     "start": "NODE_ENV=production node src/backend/index.js",
+    "ci:start-test": "NODE_ENV=test PORT=$PORT TEST_MONGODB_URI=$MONGOURI SECRET=$SECRET node src/backend/index.js",
     "backend:dev": "NODE_ENV=development nodemon --env-file=.env.local src/backend/index.js",
     "backend:test": "NODE_ENV=test node --env-file=.env.local --test --test-concurrency=1 \"src/backend/**/*.test.js\"",
-    "backend:test-start": "NODE_ENV=test node --env-file=.env.local src/backend/index.js"
+    "backend:test-start": "NODE_ENV=test node --env-file=.env.local src/backend/index.js",
+    "cy:open": "cypress open"
   },
   "dependencies": {
     "axios": "^1.4.0",
@@ -37,7 +40,9 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
+    "cypress": "^13.14.1",
     "eslint": "^8.45.0",
+    "eslint-plugin-cypress": "^3.5.0",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",

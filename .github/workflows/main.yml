@@ -31,6 +31,19 @@ jobs:
       - name: Build 🏗️
         run: npm run build
 
+      - name: E2E test
+        uses: cypress-io/github-action@v6
+        env:
+          PORT: 3003
+          MONGOURI: ${{ secrets.TEST_MONGODB_URI }}
+          SECRET: ${{ secrets.SECRET }}
+        with:
+          start: |
+            npm run dev -- --host
+            npm run ci:start-test
+          wait-on: 'http://localhost:5173, http://localhost:3003'
+          command: npm run test:e2e
+
       - name: Set up flyctl
         if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
         uses: superfly/flyctl-actions/setup-flyctl@master

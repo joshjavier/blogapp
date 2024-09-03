@@ -13,6 +13,7 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:@stylistic/recommended-extends',
     'plugin:vitest-globals/recommended',
+    'plugin:cypress/recommended',
   ],
   ignorePatterns: ['dist'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
@@ -21,6 +22,7 @@ module.exports = {
     'react-refresh',
   ],
   rules: {
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
